@@ -11,25 +11,22 @@ defmodule CLI do
       cmd ->
         cmd = String.trim(cmd)
           case cmd do
-            "exit" -> 
-              :exit
-
             "" ->
               :ok
-            
+
             _ ->
               [name | args] = String.split(cmd)
               functions = Ebin.__info__(:functions)
               match = Enum.find(functions, fn {func,arity} -> Atom.to_string(func) =~ name and arity == 1 end) # i need to test for substring collisions
-               
+
               case match do
-                {func,_arity} -> 
+                {func,_arity} ->
                   apply(Ebin,func,[args])
                 nil ->
                   IO.puts("#{name}: command not found")
               end
               :ok
-        end 
+        end
     end
 
   end
@@ -42,4 +39,4 @@ defmodule CLI do
     end
   end
 end
-#CLI.main([])
+CLI.main([])
