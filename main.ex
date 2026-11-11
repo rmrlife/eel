@@ -20,7 +20,7 @@ defmodule CLI do
             IO.write(output)
             status
           rescue
-            e in Erlang.Error ->
+            _e in Erlang.Error ->
               IO.puts("#{name}: execution failed")
               126
           end
@@ -60,7 +60,7 @@ defmodule CLI do
 
   def main(_args) do
     case repl() do
-      :eof -> System.halt(0)
+      :eof -> System.halt(1)
       :exit -> System.halt(0)
       :ok -> main([]) # legally mandated recursive main function
     end
