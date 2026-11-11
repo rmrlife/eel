@@ -1,6 +1,33 @@
 Code.require_file("bin.ex",__DIR__)
 
 defmodule CLI do
+  def checkexe(name, args) do
+    executable =
+      if String.contains?(name,"/") do
+        Path.expand(name)
+      else
+        System.find_executable(name)
+      end
+
+      case executable do
+        nil ->
+          IO.puts("#{name}: not found")
+          127
+
+        path ->
+          try do
+            {output, status} = System.cmd(path, args, stderr_to_stdout: true)
+            IO.write(output)
+            status
+          rescue
+            e in Erlang.Error ->
+              IO.puts("#{name}: execution failed")
+              126
+          end
+      end
+
+  end
+
   defp repl do
     IO.write("$ ")
     case IO.gets("") do
@@ -23,7 +50,7 @@ defmodule CLI do
                 {func,_arity} ->
                   apply(Ebin,func,[args])
                 nil ->
-                  IO.puts("#{name}: command not found")
+                  checkexe(name,args)
               end
               :ok
         end
