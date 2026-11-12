@@ -1,6 +1,20 @@
 Code.require_file("bin.ex",__DIR__)
 
 defmodule CLI do
+  def write_history_file(cmd) do
+    path = Path.expand("~/.eel_history")
+
+    case File.open(path, [:append, :utf8 ]) do
+        {:ok, file} ->
+          IO.write(file, cmd <> "\n")
+          File.close(file)
+
+        {:error, reason} ->
+          IO.puts("history error: #{reason}")
+     end
+#    IO.write("#{cmd} \n")
+  end
+
   def checkexe(name, args) do
     executable =
       if String.contains?(name,"/") do
@@ -52,6 +66,7 @@ defmodule CLI do
                 nil ->
                   checkexe(name,args)
               end
+              write_history_file(cmd)
               :ok
         end
     end
