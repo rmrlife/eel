@@ -58,4 +58,13 @@ defmodule Ebin do
         IO.puts("cd: too many arguments")
     end
   end
+  
+  def history(_args) do
+    Path.expand("~/.eel_history")
+    |> File.stream!()
+    |> Enum.with_index(1)
+    |> Enum.each(fn {line, number} ->
+        IO.puts("#{number} #{String.trim_trailing(line)}")
+    end)
+  end
 end
